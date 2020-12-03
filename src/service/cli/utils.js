@@ -42,32 +42,32 @@ const getPublicationDate = () => {
   return publicationDate;
 };
 
-const shuffleCollection = (collection) => {
-  for (let i = collection.length - 1; i > 0; i--) {
+const shuffleCollection = (items) => {
+  for (let i = items.length - 1; i > 0; i--) {
     const randomPosition = Math.floor(Math.random() * i);
-    [collection[i], collection[randomPosition]] = [collection[randomPosition], collection[i]];
+    [items[i], items[randomPosition]] = [items[randomPosition], items[i]];
   }
 
-  return collection;
+  return items;
 };
 
-const createCollection = (min, max, collection) => {
+const createCollection = (min, max, items) => {
   const arraySize = getRandomInteger(min, max);
-  const collectionItems = [];
+  const chosenItems = [];
 
-  collectionItems.push(collection[getRandomInteger(min - 1, collection.length - 1)]);
+  chosenItems.push(items[getRandomInteger(min - 1, items.length - 1)]);
 
   for (let i = 0; i < (arraySize - 1); i++) {
-    let choice = collection[getRandomInteger(0, collection.length - 1)];
+    let choice = items[getRandomInteger(0, items.length - 1)];
 
-    if (collectionItems.includes(choice)) {
+    if (chosenItems.includes(choice)) {
       i--;
     } else {
-      collectionItems.push(choice);
+      chosenItems.push(choice);
     }
   }
 
-  return collectionItems;
+  return chosenItems;
 };
 
 module.exports.generateOffers = (count) => (
