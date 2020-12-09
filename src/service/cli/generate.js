@@ -1,7 +1,7 @@
 'use strict';
 
 const fs = require(`fs`).promises;
-const {logger} = require(`./logger`);
+const logger = require(`./logger`);
 
 const {
   DEFAULT_COUNT,

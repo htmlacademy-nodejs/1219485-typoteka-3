@@ -10,6 +10,4 @@ const logger = {
   version: (versionNumber) => console.log(chalk.blue(versionNumber))
 };
 
-module.exports = {
-  logger
-};
+module.exports = logger;
