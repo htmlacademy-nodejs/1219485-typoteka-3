@@ -1,7 +1,7 @@
 'use strict';
 
 const fs = require(`fs`).promises;
-const chalk = require(`chalk`);
+const logger = require(`./logger`);
 
 const {
   DEFAULT_COUNT,
@@ -21,7 +21,7 @@ module.exports = {
     const countOffer = parseFloat(count) || DEFAULT_COUNT;
 
     if (!(countOffer < MAX_ELEMENTS_AMOUNT)) {
-      console.info(chalk.red(`Не больше 1000 публикаций`));
+      logger.info(`Не больше 1000 публикаций`);
       process.exit(ExitCode.ERROR);
     }
 
@@ -29,9 +29,9 @@ module.exports = {
 
     try {
       await fs.writeFile(FILE_NAME, content);
-      console.log(chalk.green(`Operation success. File created.`));
+      logger.success(`Operation success. File created.`);
     } catch (err) {
-      console.error(chalk.red(`Can't write data to file...`));
+      logger.error(`Can't write data to file...`);
     }
   },
 };
