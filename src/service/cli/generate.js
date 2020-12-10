@@ -11,8 +11,13 @@ const {
 } = require(`./const`);
 
 const {
-  generateOffers
+  generateOffers,
+  readContent
 } = require(`./utils`);
+
+const FILE_SENTENCES_PATH = `./src/data/sentences.txt`;
+const FILE_CATEGORIES_PATH = `./src/data/categories.txt`;
+const FILE_TITLES_PATH = `./src/data/titles.txt`;
 
 module.exports = {
   name: `--generate`,
@@ -20,12 +25,16 @@ module.exports = {
     const [count] = argv;
     const countOffer = parseFloat(count) || DEFAULT_COUNT;
 
+    const titles = await readContent(FILE_TITLES_PATH);
+    const categories = await readContent(FILE_CATEGORIES_PATH);
+    const sentences = await readContent(FILE_SENTENCES_PATH);
+
     if (!(countOffer < MAX_ELEMENTS_AMOUNT)) {
       logger.info(`Не больше 1000 публикаций`);
       process.exit(ExitCode.ERROR);
     }
 
-    const content = JSON.stringify(generateOffers(countOffer));
+    const content = JSON.stringify(generateOffers(countOffer, titles, categories, sentences));
 
     try {
       await fs.writeFile(FILE_NAME, content);
