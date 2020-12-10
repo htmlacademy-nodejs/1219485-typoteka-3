@@ -1,11 +1,9 @@
 'use strict';
 
-const {
-  TITLES,
-  SENTENCES,
-  CATEGORIES,
-  MAX_SENTENCES_AMOUNT,
-} = require(`./const`);
+const MAX_SENTENCES_AMOUNT = require(`./const`);
+
+const logger = require(`./logger`);
+const fs = require(`fs`).promises;
 
 const MAX_MONTHS_AMOUNT = 3;
 const DAYS_PER_MONTH = 30;
@@ -70,12 +68,27 @@ const createCollection = (min, max, items) => {
   return chosenItems;
 };
 
-module.exports.generateOffers = (count) => (
+const readContent = async (filePath) => {
+  try {
+    const content = await fs.readFile(filePath, `utf8`);
+    return content.split(`\n`);
+  } catch (err) {
+    logger.error(err);
+    return [];
+  }
+};
+
+const generateOffers = (count, titles, categories, sentences) => (
   Array(count).fill({}).map(() => ({
-    title: TITLES[getRandomInteger(0, TITLES.length - 1)],
+    title: titles[getRandomInteger(0, titles.length - 1)],
     createdDate: formatDate(getPublicationDate()),
-    announce: shuffleCollection(SENTENCES).slice(1, getRandomInteger(1, MAX_SENTENCES_AMOUNT)).join(` `),
-    fullText: shuffleCollection(SENTENCES).slice(1, getRandomInteger(1, SENTENCES.length - 1)).join(` `),
-    category: createCollection(1, CATEGORIES.length - 1, CATEGORIES),
+    announce: shuffleCollection(sentences).slice(1, getRandomInteger(1, MAX_SENTENCES_AMOUNT)).join(` `),
+    fullText: shuffleCollection(sentences).slice(1, getRandomInteger(1, sentences.length - 1)).join(` `),
+    category: createCollection(1, categories.length - 1, categories),
   }))
 );
+
+module.exports = {
+  readContent,
+  generateOffers
+};
