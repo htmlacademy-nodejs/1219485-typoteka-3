@@ -7,6 +7,7 @@ const {
   DEFAULT_PORT,
   HttpCode,
   FILE_NAME,
+  ExitCode
 } = require(`./const`);
 
 const app = express();
@@ -17,7 +18,7 @@ app.get(`/posts`, async (req, res) => {
     const mocks = JSON.parse(fileContent);
     res.json(mocks);
   } catch (err) {
-    console.log(`We've got an error here, probably file is nonexistent or empty: ${err}`);
+    res.status(HttpCode.INTERNAL_SERVER_ERROR).send(err);
     res.json([]);
   }
 });
@@ -32,8 +33,13 @@ module.exports = {
     const [customPort] = args;
     const port = parseFloat(customPort, 10) || DEFAULT_PORT;
 
-    app.listen(DEFAULT_PORT, () =>
-      logger.success(`Ожидаю соединений на ${port}`)
-    );
+    app.listen(port, (err) => {
+      if (err) {
+        logger.error(`Ошибка при создании сервера`, err);
+        process.exit(ExitCode.ERROR);
+      }
+
+      logger.success(`Ожидаю соединений на ${port}`);
+    });
   }
 };
