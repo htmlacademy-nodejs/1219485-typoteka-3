@@ -8,6 +8,7 @@ const DEFAULT_PORT = 3000;
 const MAX_SENTENCES_AMOUNT = 5;
 const MAX_ELEMENTS_AMOUNT = 1000;
 const USER_ARGV_INDEX = 2;
+const API_PREFIX = `/api`;
 
 const ExitCode = {
   ERROR: 1,
@@ -16,8 +17,10 @@ const ExitCode = {
 
 const HttpCode = {
   OK: 200,
+  CREATED: 201,
   NOT_FOUND: 404,
   INTERNAL_SERVER_ERROR: 500,
+  BAD_REQUEST: 400,
   FORBIDDEN: 403,
   UNAUTHORIZED: 401,
 };
@@ -31,7 +34,8 @@ module.exports = {
   ExitCode,
   DEFAULT_COMMAND,
   DEFAULT_PORT,
-  HttpCode
+  HttpCode,
+  API_PREFIX
 };
 
 
