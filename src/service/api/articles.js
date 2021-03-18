@@ -1,7 +1,6 @@
 'use strict';
 
 const {Router} = require(`express`);
-const {HttpCode} = require(`../cli/const`);
 const articleExists = require(`../middlewares/article-exists`);
 const articleValidator = require(`../middlewares/article-validator`);
 const articleController = require(`../controllers/articles`);
@@ -13,36 +12,13 @@ module.exports = (app, articleService, commentsRouter) => {
 
   route.get(`/`, articleController.main);
 
-  route.get(`/:articleId`, articleExists(articleService), (req, res) => {
-    const {post} = res.locals;
+  route.get(`/:articleId`, articleExists(articleService), articleController.articleId);
 
-    return res.status(HttpCode.OK).json(post);
-  });
+  route.post(`/`, articleValidator, articleController.add);
 
-  route.post(`/`, articleValidator, (req, res) => {
-    const post = articleService.add(req.body);
+  route.put(`/:articleId`, [articleExists(articleService), articleValidator], articleController.update);
 
-    return res.status(HttpCode.CREATED).json(post);
-  });
-
-  route.put(`/:articleId`, [articleExists(articleService), articleValidator], (req, res) => {
-    const {articleId} = req.params;
-
-    const updatedPost = articleService.update(articleId, req.body);
-
-    return res.status(HttpCode.OK).json(updatedPost);
-  });
-
-  route.delete(`/:articleId`, (req, res) => {
-    const {articleId} = req.params;
-    const deletedPost = articleService.delete(articleId);
-
-    if (!deletedPost) {
-      return res.status(HttpCode.NOT_FOUND).send(`Post with ${articleId} not found`);
-    }
-
-    return res.status(HttpCode.OK).json(deletedPost);
-  });
+  route.delete(`/:articleId`, articleController.delete);
 
   route.use(`/:articleId/comments`, articleExists(articleService), commentsRouter);
 };
