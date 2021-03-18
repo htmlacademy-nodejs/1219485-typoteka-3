@@ -4,17 +4,14 @@ const {Router} = require(`express`);
 const {HttpCode} = require(`../cli/const`);
 const articleExists = require(`../middlewares/article-exists`);
 const articleValidator = require(`../middlewares/article-validator`);
+const articleController = require(`../controllers/articles`);
 
 const route = new Router();
 
 module.exports = (app, articleService, commentsRouter) => {
   app.use(`/articles`, route);
 
-  route.get(`/`, (req, res) => {
-    const posts = articleService.findAll();
-
-    return res.status(HttpCode.OK).json(posts);
-  });
+  route.get(`/`, articleController.main);
 
   route.get(`/:articleId`, articleExists(articleService), (req, res) => {
     const {post} = res.locals;
