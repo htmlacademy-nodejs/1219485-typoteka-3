@@ -1,15 +1,12 @@
 'use strict';
 
 const {Router} = require(`express`);
-const {HttpCode} = require(`../cli/const`);
+const categoryController = require(`../controllers/categories`);
 
 const route = new Router();
 
-module.exports = (app, service) => {
+module.exports = (app) => {
   app.use(`/categories`, route);
 
-  route.get(`/`, (req, res) => {
-    const categories = service.findAll();
-    res.status(HttpCode.OK).json(categories);
-  });
+  route.get(`/`, categoryController.main);
 };
