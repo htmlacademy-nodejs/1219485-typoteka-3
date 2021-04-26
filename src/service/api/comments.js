@@ -1,17 +1,48 @@
 'use strict';
 
 const {Router} = require(`express`);
+const {HttpCode} = require(`../../const`);
 const commentValidator = require(`../middlewares/comment-validator`);
-const commentsController = require(`../controllers/comments`);
+const articleExists = require(`../middlewares/article-exists`);
 
-module.exports = () => {
+module.exports = (serviceLocator) => {
   const route = new Router({mergeParams: true});
 
-  route.get(`/`, commentsController.main);
+  const app = serviceLocator.get(`app`);
+  const articleService = serviceLocator.get(`articleService`);
+  const commentService = serviceLocator.get(`commentService`);
+  const logger = serviceLocator.get(`logger`);
 
-  route.delete(`/:commentId`, commentsController.delete);
+  const isPostExists = articleExists(articleService, logger);
 
-  route.post(`/`, commentValidator, commentsController.create);
+  app.use(`/articles/:articleId/comments`, route);
+
+  route.get(`/`, isPostExists, (req, res) => {
+    const {post} = res.locals;
+    const comments = commentService.findAll(post);
+
+    return res.status(HttpCode.OK).json(comments);
+  });
+
+  route.delete(`/:commentId`, isPostExists, (req, res) => {
+    const {post} = res.locals;
+    const {commentId} = req.params;
+    const deletedComment = commentService.delete(post, commentId);
+
+    if (!deletedComment) {
+      res.status(HttpCode.NOT_FOUND).send(`Comment with ${commentId} not found`);
+      return logger.error(`Comment not found: ${commentId}`);
+    }
+
+    return res.status(HttpCode.OK).json(deletedComment);
+  });
+
+  route.post(`/`, [isPostExists, commentValidator(logger)], (req, res) => {
+    const {post} = res.locals;
+    const comment = commentService.create(post, req.body);
+
+    return res.status(HttpCode.CREATED).json(comment);
+  });
 
   return route;
 };

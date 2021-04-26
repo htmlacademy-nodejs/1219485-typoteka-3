@@ -1,12 +1,27 @@
 'use strict';
 
 const {Router} = require(`express`);
-const searchController = require(`../controllers/search`);
+const {HttpCode} = require(`../../const`);
 
-const route = new Router();
+module.exports = (serviceLocator) => {
+  const route = new Router();
 
-module.exports = (app) => {
+  const app = serviceLocator.get(`app`);
+  const service = serviceLocator.get(`searchService`);
+  const logger = serviceLocator.get(`logger`);
+
   app.use(`/search`, route);
 
-  route.get(`/`, searchController.main);
+  route.get(`/`, (req, res) => {
+    const {query = ``} = req.query;
+
+    if (!query) {
+      res.status(HttpCode.BAD_REQUEST).json([]);
+      return logger.error(`Invalid query.`);
+    }
+
+    return res.status(HttpCode.OK).json(service.findAll(query));
+  });
+
+  return route;
 };
