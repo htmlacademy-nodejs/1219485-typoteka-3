@@ -1,0 +1,10 @@
+mixin themes(categories)
+  ul.themes(class!=attributes.class || ``)
+    each category in categories
+      li.themes__item
+        a.themes__item-link(href="#")
+          | #{category}
+          sup #{articles.filter((article) => article.category.includes(category)).length}
+
+        if attributes.class
+          button.themes__remove-btn(type="button") Удалить категорию

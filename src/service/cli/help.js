@@ -1,22 +1,21 @@
 'use strict';
 
-const logger = require(`./logger`);
+const chalk = require(`chalk`);
 
 module.exports = {
   name: `--help`,
   run() {
     const text = `
-    Программа запускает http-сервер и формирует файл с данными для api.
+    Программа запускает http-сервер и формирует файл с данными для API.
+
     Гайд:
-
-      server <command>
-
-      Команды:
-      --version:            выводит номер версии
-      --help:               печатает этот текст
-      --generate <count>    формирует файл mocks.json
+    server <command>
+    Команды:
+    --version:            выводит номер версии
+    --help:               печатает этот текст
+    --generate <count>    формирует файл mocks.json
     `;
 
-    logger.help(text);
+    console.log(chalk.gray(text));
   }
 };

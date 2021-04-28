@@ -1,12 +1,20 @@
 'use strict';
 
 const {Router} = require(`express`);
-const categoryController = require(`../controllers/categories`);
+const {HttpCode} = require(`../../const`);
 
-const route = new Router();
+module.exports = (serviceLocator) => {
+  const route = new Router();
 
-module.exports = (app) => {
+  const app = serviceLocator.get(`app`);
+  const service = serviceLocator.get(`categoryService`);
+
   app.use(`/categories`, route);
 
-  route.get(`/`, categoryController.main);
+  route.get(`/`, (req, res) => {
+    const categories = service.findAll();
+    res.status(HttpCode.OK).json(categories);
+  });
+
+  return route;
 };
