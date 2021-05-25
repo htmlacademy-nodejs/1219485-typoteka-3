@@ -1,7 +1,9 @@
 'use strict';
 
 const pino = require(`pino`);
-const LOG_FILE = __dirname + `/logs/test.log`;
+const path = require(`path`);
+
+const LOG_FILE = path.join(__dirname, `logs`, `test.log`);
 
 const logger = pino({
   name: `test-logger`,
